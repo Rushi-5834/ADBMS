@@ -1,0 +1,104 @@
+CREATE DATABASE hospital_star;
+USE hospital_star;
+
+-- Patient dimension
+CREATE TABLE DIM_PATIENT (
+    patient_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    age INT,
+    gender VARCHAR(10),
+    city VARCHAR(30)
+);
+
+-- Doctor dimension
+CREATE TABLE DIM_DOCTOR (
+    doctor_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    specialization VARCHAR(50)
+);
+
+-- Department dimension
+CREATE TABLE DIM_DEPARTMENT (
+    department_id INT PRIMARY KEY,
+    department_name VARCHAR(50),
+    floor INT
+);
+
+-- Date dimension
+CREATE TABLE DIM_DATE (
+    date_id INT PRIMARY KEY,
+    day INT,
+    month VARCHAR(20),
+    year INT
+);
+
+-- Fact table
+CREATE TABLE FACT_TREATMENT (
+    treatment_id INT PRIMARY KEY,
+    patient_id INT,
+    doctor_id INT,
+    department_id INT,
+    date_id INT,
+    bill_amount DECIMAL(10,2),
+    stay_days INT,
+
+    FOREIGN KEY (patient_id)
+        REFERENCES DIM_PATIENT(patient_id),
+
+    FOREIGN KEY (doctor_id)
+        REFERENCES DIM_DOCTOR(doctor_id),
+
+    FOREIGN KEY (department_id)
+        REFERENCES DIM_DEPARTMENT(department_id),
+
+    FOREIGN KEY (date_id)
+        REFERENCES DIM_DATE(date_id)
+);
+
+-- Insert patient records
+INSERT INTO DIM_PATIENT VALUES
+(1, 'Amit', 25, 'Male', 'Pune'),
+(2, 'Neha', 30, 'Female', 'Mumbai');
+
+-- Insert doctor records
+INSERT INTO DIM_DOCTOR VALUES
+(101, 'Dr. Sharma', 'Cardiology'),
+(102, 'Dr. Patil', 'Neurology');
+
+-- Insert department records
+INSERT INTO DIM_DEPARTMENT VALUES
+(1, 'Cardiology', 2),
+(2, 'Neurology', 3);
+
+-- Insert date records
+INSERT INTO DIM_DATE VALUES
+(20260101, 1, 'January', 2026),
+(20260102, 2, 'January', 2026);
+
+-- Insert treatment records
+INSERT INTO FACT_TREATMENT VALUES
+(1, 1, 101, 1, 20260101, 25000, 3),
+(2, 2, 102, 2, 20260102, 15000, 2);
+
+-- Display records
+SELECT * FROM FACT_TREATMENT;
+
+-- Join all tables
+SELECT
+    f.treatment_id,
+    p.name AS patient_name,
+    d.name AS doctor_name,
+    dep.department_name,
+    dt.day,
+    dt.month,
+    f.bill_amount,
+    f.stay_days
+FROM FACT_TREATMENT f
+JOIN DIM_PATIENT p
+    ON f.patient_id = p.patient_id
+JOIN DIM_DOCTOR d
+    ON f.doctor_id = d.doctor_id
+JOIN DIM_DEPARTMENT dep
+    ON f.department_id = dep.department_id
+JOIN DIM_DATE dt
+    ON f.date_id = dt.date_id;

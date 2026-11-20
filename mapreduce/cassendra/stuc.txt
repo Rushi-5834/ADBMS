@@ -1,0 +1,33 @@
+-- Step 1: Create keyspace
+CREATE KEYSPACE college
+WITH replication = {
+    'class': 'SimpleStrategy',
+    'replication_factor': 1
+};
+
+-- Step 2: Select keyspace
+USE college;
+
+-- Step 3: Create table
+CREATE TABLE students (
+    roll_no INT PRIMARY KEY,
+    name TEXT,
+    department TEXT,
+    marks INT
+);
+
+-- Step 4: Insert records
+INSERT INTO students
+(roll_no, name, department, marks)
+VALUES (1, 'Amit', 'CSE', 78);
+
+INSERT INTO students
+(roll_no, name, department, marks)
+VALUES (2, 'Neha', 'IT', 55);
+
+INSERT INTO students
+(roll_no, name, department, marks)
+VALUES (3, 'Ravi', 'CSE', 82);
+
+-- Step 5: Display records
+SELECT * FROM students;

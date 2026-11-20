@@ -1,0 +1,40 @@
+-- Step 1: Create keyspace
+CREATE KEYSPACE college
+WITH replication = {
+    'class': 'SimpleStrategy',
+    'replication_factor': 1
+};
+
+-- Step 2: Select keyspace
+USE college;
+
+-- Step 3: Create table
+CREATE TABLE books (
+    book_id TEXT PRIMARY KEY,
+    book_name TEXT,
+    category TEXT
+);
+
+-- Step 4: Insert records
+INSERT INTO books
+(book_id, book_name, category)
+VALUES ('B1', 'Wings of Fire', 'Fiction');
+
+INSERT INTO books
+(book_id, book_name, category)
+VALUES ('B2', 'Physics Basics', 'Science');
+
+INSERT INTO books
+(book_id, book_name, category)
+VALUES ('B3', 'The Alchemist', 'Fiction');
+
+INSERT INTO books
+(book_id, book_name, category)
+VALUES ('B4', 'Indian History', 'History');
+
+INSERT INTO books
+(book_id, book_name, category)
+VALUES ('B5', 'Chemistry Basics', 'Science');
+
+-- Step 5: Display records
+SELECT * FROM books;

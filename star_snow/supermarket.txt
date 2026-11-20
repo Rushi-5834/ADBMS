@@ -1,0 +1,88 @@
+-- Step 1: Create database
+CREATE DATABASE supermarket;
+USE supermarket;
+
+-- Step 2: Create product dimension
+CREATE TABLE DIM_PRODUCT (
+    product_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    category VARCHAR(30),
+    brand VARCHAR(30)
+);
+
+-- Step 3: Create store dimension
+CREATE TABLE DIM_STORE (
+    store_id INT PRIMARY KEY,
+    store_name VARCHAR(50),
+    city VARCHAR(30),
+    manager VARCHAR(50)
+);
+
+-- Step 4: Create date dimension
+CREATE TABLE DIM_DATE (
+    date_id INT PRIMARY KEY,
+    day INT,
+    month VARCHAR(20),
+    quarter INT,
+    year INT
+);
+
+-- Step 5: Create fact table
+CREATE TABLE FACT_SALES (
+    sale_id INT PRIMARY KEY,
+    date_id INT,
+    product_id INT,
+    store_id INT,
+    quantity INT,
+    sales_amount DECIMAL(10,2),
+
+    FOREIGN KEY (date_id)
+        REFERENCES DIM_DATE(date_id),
+
+    FOREIGN KEY (product_id)
+        REFERENCES DIM_PRODUCT(product_id),
+
+    FOREIGN KEY (store_id)
+        REFERENCES DIM_STORE(store_id)
+);
+
+-- Step 6: Insert product records
+INSERT INTO DIM_PRODUCT VALUES
+(101, 'Pen', 'Stationery', 'Cello'),
+(102, 'Mouse', 'Electronics', 'Logitech');
+
+-- Step 7: Insert store records
+INSERT INTO DIM_STORE VALUES
+(1, 'Store A', 'Pune', 'Amit'),
+(2, 'Store B', 'Mumbai', 'Neha');
+
+-- Step 8: Insert date records
+INSERT INTO DIM_DATE VALUES
+(20260101, 1, 'January', 1, 2026),
+(20260102, 2, 'January', 1, 2026);
+
+-- Step 9: Insert sales records
+INSERT INTO FACT_SALES VALUES
+(1, 20260101, 101, 1, 10, 1000),
+(2, 20260102, 102, 2, 2, 2000);
+
+-- Step 10: Display sales records
+SELECT * FROM FACT_SALES;
+
+-- Step 11: Join all tables
+SELECT
+    f.sale_id,
+    p.name AS product_name,
+    p.category,
+    s.store_name,
+    d.month,
+    d.year,
+    f.quantity,
+    f.sales_amount
+FROM FACT_SALES f
+JOIN DIM_PRODUCT p
+    ON f.product_id = p.product_id
+JOIN DIM_STORE s
+    ON f.store_id = s.store_id
+JOIN DIM_DATE d
+    ON f.date_id = d.date_id;

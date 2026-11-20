@@ -1,0 +1,107 @@
+CREATE DATABASE ecommerce_star;
+USE ecommerce_star;
+
+-- Customer dimension
+CREATE TABLE DIM_CUSTOMER (
+    customer_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    city VARCHAR(30),
+    membership VARCHAR(30)
+);
+
+-- Product dimension
+CREATE TABLE DIM_PRODUCT (
+    product_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    category VARCHAR(30),
+    brand VARCHAR(30),
+    price DECIMAL(10,2)
+);
+
+-- Date dimension
+CREATE TABLE DIM_DATE (
+    date_id INT PRIMARY KEY,
+    day INT,
+    month VARCHAR(20),
+    quarter INT,
+    year INT
+);
+
+-- Seller dimension
+CREATE TABLE DIM_SELLER (
+    seller_id INT PRIMARY KEY,
+    seller_name VARCHAR(50),
+    city VARCHAR(30)
+);
+
+-- Fact table
+CREATE TABLE FACT_ORDERS (
+    order_id INT PRIMARY KEY,
+    customer_id INT,
+    product_id INT,
+    date_id INT,
+    seller_id INT,
+    quantity INT,
+    order_amount DECIMAL(10,2),
+    discount DECIMAL(10,2),
+
+    FOREIGN KEY (customer_id)
+        REFERENCES DIM_CUSTOMER(customer_id),
+
+    FOREIGN KEY (product_id)
+        REFERENCES DIM_PRODUCT(product_id),
+
+    FOREIGN KEY (date_id)
+        REFERENCES DIM_DATE(date_id),
+
+    FOREIGN KEY (seller_id)
+        REFERENCES DIM_SELLER(seller_id)
+);
+
+-- Insert customers
+INSERT INTO DIM_CUSTOMER VALUES
+(1, 'Amit', 'Pune', 'Gold'),
+(2, 'Neha', 'Mumbai', 'Silver');
+
+-- Insert products
+INSERT INTO DIM_PRODUCT VALUES
+(101, 'Laptop', 'Electronics', 'Dell', 50000),
+(102, 'Mouse', 'Electronics', 'Logitech', 1000);
+
+-- Insert dates
+INSERT INTO DIM_DATE VALUES
+(20260101, 1, 'January', 1, 2026),
+(20260102, 2, 'January', 1, 2026);
+
+-- Insert sellers
+INSERT INTO DIM_SELLER VALUES
+(1, 'Seller A', 'Pune'),
+(2, 'Seller B', 'Mumbai');
+
+-- Insert orders
+INSERT INTO FACT_ORDERS VALUES
+(1, 1, 101, 20260101, 1, 1, 50000, 2000),
+(2, 2, 102, 20260102, 2, 2, 2000, 100);
+
+-- Display records
+SELECT * FROM FACT_ORDERS;
+
+-- Join all tables
+SELECT
+    f.order_id,
+    c.name AS customer_name,
+    p.name AS product_name,
+    d.year,
+    s.seller_name,
+    f.quantity,
+    f.order_amount,
+    f.discount
+FROM FACT_ORDERS f
+JOIN DIM_CUSTOMER c
+    ON f.customer_id = c.customer_id
+JOIN DIM_PRODUCT p
+    ON f.product_id = p.product_id
+JOIN DIM_DATE d
+    ON f.date_id = d.date_id
+JOIN DIM_SELLER s
+    ON f.seller_id = s.seller_id;

@@ -1,0 +1,73 @@
+
+// STEP 1: Create / Select database
+use college
+
+// STEP 2: Create structured collection
+db.createCollection("students")
+
+// STEP 3: Insert structured JSON documents
+db.students.insertMany([
+  {
+    roll_no: 1,
+    name: "Amit",
+    department: "CSE",
+    marks: 78,
+    address: { city: "Pune", pin: 411001 }
+  },
+  {
+    roll_no: 2,
+    name: "Neha",
+    department: "IT",
+    marks: 55,
+    address: { city: "Mumbai", pin: 400001 }
+  },
+  {
+    roll_no: 3,
+    name: "Ravi",
+    department: "CSE",
+    marks: 82,
+    address: { city: "Delhi", pin: 110001 }
+  }
+])
+
+// STEP 4: Create unstructured collection
+db.createCollection("student_profiles")
+
+// STEP 5: Insert unstructured JSON documents
+db.student_profiles.insertMany([
+  {
+    roll_no: 1,
+    name: "Amit",
+    hobbies: ["chess", "cricket"],
+    address: "Pune, Maharashtra"
+  },
+  {
+    roll_no: 2,
+    name: "Neha",
+    marks: { maths: 80, physics: 70 },
+    achievements: "Won hackathon 2025",
+    phone: ["9876500001", "9876500002"]
+  },
+  {
+    roll_no: 3,
+    name: "Ravi",
+    department: "CSE",
+    remarks: "Class representative"
+  }
+])
+
+// STEP 6: Display databases
+show dbs
+
+// STEP 7: Display collections
+show collections
+
+// STEP 8: Display structured documents
+db.students.find().pretty()
+
+// STEP 9: Display unstructured documents
+db.student_profiles.find().pretty()
+
+// STEP 10: Count documents
+db.students.countDocuments()
+db.student_profiles.countDocuments()

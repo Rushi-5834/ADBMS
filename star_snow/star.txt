@@ -1,0 +1,62 @@
+-- Create database
+CREATE DATABASE star_db;
+USE star_db;
+
+-- Create fact table
+CREATE TABLE FACT_SALES (
+    sale_id INT PRIMARY KEY,
+    product_id INT,
+    customer_id INT,
+    quantity INT,
+    amount INT
+);
+
+-- Create product dimension
+CREATE TABLE DIM_PRODUCT (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(30),
+    category VARCHAR(30),
+    brand VARCHAR(30)
+);
+
+-- Create customer dimension
+CREATE TABLE DIM_CUSTOMER (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(30),
+    city VARCHAR(30)
+);
+
+-- Insert product records
+INSERT INTO DIM_PRODUCT VALUES
+(101, 'Pen', 'Stationery', 'Cello'),
+(102, 'Mouse', 'Electronics', 'Logitech');
+
+-- Insert customer records
+INSERT INTO DIM_CUSTOMER VALUES
+(1, 'Amit', 'Pune'),
+(2, 'Neha', 'Mumbai');
+
+-- Insert sales records
+INSERT INTO FACT_SALES VALUES
+(1, 101, 1, 2, 100),
+(2, 102, 2, 1, 500);
+
+-- Display records
+SELECT * FROM FACT_SALES;
+SELECT * FROM DIM_PRODUCT;
+SELECT * FROM DIM_CUSTOMER;
+
+-- Join tables to display sales details
+SELECT
+    f.sale_id,
+    p.product_name,
+    p.category,
+    c.customer_name,
+    c.city,
+    f.quantity,
+    f.amount
+FROM FACT_SALES f
+JOIN DIM_PRODUCT p
+ON f.product_id = p.product_id
+JOIN DIM_CUSTOMER c
+ON f.customer_id = c.customer_id;

@@ -1,0 +1,44 @@
+CREATE DATABASE bank_a;
+CREATE DATABASE bank_b;
+
+USE bank_a;
+
+CREATE TABLE accounts (
+    acc_no INT PRIMARY KEY,
+    name VARCHAR(30),
+    balance INT
+);
+
+INSERT INTO accounts VALUES
+(101, 'Amit', 5000);
+
+USE bank_b;
+
+CREATE TABLE accounts (
+    acc_no INT PRIMARY KEY,
+    name VARCHAR(30),
+    balance INT
+);
+
+INSERT INTO accounts VALUES
+(202, 'Neha', 3000);
+
+-- Start transaction
+START TRANSACTION;
+
+-- Deduct 1000 from Amit
+UPDATE bank_a.accounts
+SET balance = balance - 1000
+WHERE acc_no = 101;
+
+-- Add 1000 to Neha
+UPDATE bank_b.accounts
+SET balance = balance + 1000
+WHERE acc_no = 202;
+
+-- Save changes
+COMMIT;
+
+-- Check balances
+SELECT * FROM bank_a.accounts;
+SELECT * FROM bank_b.accounts;

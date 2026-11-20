@@ -1,0 +1,104 @@
+CREATE DATABASE sales_star;
+USE sales_star;
+
+-- Product dimension
+CREATE TABLE DIM_PRODUCT (
+    product_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    category VARCHAR(30),
+    brand VARCHAR(30)
+);
+
+-- Customer dimension
+CREATE TABLE DIM_CUSTOMER (
+    customer_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    segment VARCHAR(30),
+    city VARCHAR(30)
+);
+
+-- Date dimension
+CREATE TABLE DIM_DATE (
+    date_id INT PRIMARY KEY,
+    day INT,
+    month VARCHAR(20),
+    year INT
+);
+
+-- Region dimension
+CREATE TABLE DIM_REGION (
+    region_id INT PRIMARY KEY,
+    region_name VARCHAR(30),
+    state VARCHAR(30),
+    country VARCHAR(30)
+);
+
+-- Fact table
+CREATE TABLE FACT_SALES (
+    sale_id INT PRIMARY KEY,
+    date_id INT,
+    product_id INT,
+    customer_id INT,
+    region_id INT,
+    quantity INT,
+    revenue DECIMAL(10,2),
+
+    FOREIGN KEY (date_id)
+        REFERENCES DIM_DATE(date_id),
+
+    FOREIGN KEY (product_id)
+        REFERENCES DIM_PRODUCT(product_id),
+
+    FOREIGN KEY (customer_id)
+        REFERENCES DIM_CUSTOMER(customer_id),
+
+    FOREIGN KEY (region_id)
+        REFERENCES DIM_REGION(region_id)
+);
+
+-- Insert products
+INSERT INTO DIM_PRODUCT VALUES
+(101, 'Laptop', 'Electronics', 'Dell'),
+(102, 'Pen', 'Stationery', 'Cello');
+
+-- Insert customers
+INSERT INTO DIM_CUSTOMER VALUES
+(1, 'Amit', 'Regular', 'Pune'),
+(2, 'Neha', 'Premium', 'Mumbai');
+
+-- Insert dates
+INSERT INTO DIM_DATE VALUES
+(20260101, 1, 'January', 2026),
+(20260102, 2, 'January', 2026);
+
+-- Insert regions
+INSERT INTO DIM_REGION VALUES
+(1, 'West', 'Maharashtra', 'India'),
+(2, 'South', 'Karnataka', 'India');
+
+-- Insert sales
+INSERT INTO FACT_SALES VALUES
+(1, 20260101, 101, 1, 1, 2, 100000),
+(2, 20260102, 102, 2, 2, 10, 1000);
+
+-- Display records
+SELECT * FROM FACT_SALES;
+
+-- Join all tables
+SELECT
+    f.sale_id,
+    p.name AS product_name,
+    c.name AS customer_name,
+    d.year,
+    r.region_name,
+    f.quantity,
+    f.revenue
+FROM FACT_SALES f
+JOIN DIM_PRODUCT p
+    ON f.product_id = p.product_id
+JOIN DIM_CUSTOMER c
+    ON f.customer_id = c.customer_id
+JOIN DIM_DATE d
+    ON f.date_id = d.date_id
+JOIN DIM_REGION r
+    ON f.region_id = r.region_id;

@@ -1,0 +1,104 @@
+-- Create database
+CREATE DATABASE snowflake_db;
+USE snowflake_db;
+
+-- Create fact table
+CREATE TABLE FACT_SALES (
+    sale_id INT PRIMARY KEY,
+    product_id INT,
+    customer_id INT,
+    quantity INT,
+    amount INT
+);
+
+-- Create product table
+CREATE TABLE DIM_PRODUCT (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(30),
+    category_id INT
+);
+
+-- Create category table
+CREATE TABLE DIM_CATEGORY (
+    category_id INT PRIMARY KEY,
+    category_name VARCHAR(30)
+);
+
+-- Create customer table
+CREATE TABLE DIM_CUSTOMER (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(30),
+    city_id INT
+);
+
+-- Create city table
+CREATE TABLE DIM_CITY (
+    city_id INT PRIMARY KEY,
+    city_name VARCHAR(30),
+    state_id INT
+);
+
+-- Create state table
+CREATE TABLE DIM_STATE (
+    state_id INT PRIMARY KEY,
+    state_name VARCHAR(30)
+);
+
+-- Insert category records
+INSERT INTO DIM_CATEGORY VALUES
+(1, 'Stationery'),
+(2, 'Electronics');
+
+-- Insert product records
+INSERT INTO DIM_PRODUCT VALUES
+(101, 'Pen', 1),
+(102, 'Mouse', 2);
+
+-- Insert state records
+INSERT INTO DIM_STATE VALUES
+(1, 'Maharashtra');
+
+-- Insert city records
+INSERT INTO DIM_CITY VALUES
+(1, 'Pune', 1),
+(2, 'Mumbai', 1);
+
+-- Insert customer records
+INSERT INTO DIM_CUSTOMER VALUES
+(1, 'Amit', 1),
+(2, 'Neha', 2);
+
+-- Insert sales records
+INSERT INTO FACT_SALES VALUES
+(1, 101, 1, 2, 100),
+(2, 102, 2, 1, 500);
+
+-- Display records
+SELECT * FROM FACT_SALES;
+SELECT * FROM DIM_PRODUCT;
+SELECT * FROM DIM_CATEGORY;
+SELECT * FROM DIM_CUSTOMER;
+SELECT * FROM DIM_CITY;
+SELECT * FROM DIM_STATE;
+
+-- Join all tables
+SELECT
+    f.sale_id,
+    p.product_name,
+    cat.category_name,
+    c.customer_name,
+    city.city_name,
+    s.state_name,
+    f.quantity,
+    f.amount
+FROM FACT_SALES f
+JOIN DIM_PRODUCT p
+ON f.product_id = p.product_id
+JOIN DIM_CATEGORY cat
+ON p.category_id = cat.category_id
+JOIN DIM_CUSTOMER c
+ON f.customer_id = c.customer_id
+JOIN DIM_CITY city
+ON c.city_id = city.city_id
+JOIN DIM_STATE s
+ON city.state_id = s.state_id;

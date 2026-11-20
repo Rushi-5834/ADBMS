@@ -1,0 +1,85 @@
+CREATE DATABASE college_star;
+USE college_star;
+
+-- Student dimension
+CREATE TABLE DIM_STUDENT (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    department VARCHAR(30),
+    city VARCHAR(30)
+);
+
+-- Course dimension
+CREATE TABLE DIM_COURSE (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(50),
+    faculty VARCHAR(50),
+    credits INT
+);
+
+-- Time dimension
+CREATE TABLE DIM_TIME (
+    date_id INT PRIMARY KEY,
+    semester INT,
+    year INT
+);
+
+-- Fact table
+CREATE TABLE FACT_RESULT (
+    result_id INT PRIMARY KEY,
+    student_id INT,
+    course_id INT,
+    date_id INT,
+    marks INT,
+    attendance_percent DECIMAL(5,2),
+
+    FOREIGN KEY (student_id)
+        REFERENCES DIM_STUDENT(student_id),
+
+    FOREIGN KEY (course_id)
+        REFERENCES DIM_COURSE(course_id),
+
+    FOREIGN KEY (date_id)
+        REFERENCES DIM_TIME(date_id)
+);
+
+-- Insert student records
+INSERT INTO DIM_STUDENT VALUES
+(1, 'Amit', 'CSE', 'Pune'),
+(2, 'Neha', 'IT', 'Mumbai');
+
+-- Insert course records
+INSERT INTO DIM_COURSE VALUES
+(101, 'DBMS', 'Prof. Sharma', 4),
+(102, 'AI', 'Prof. Patil', 3);
+
+-- Insert time records
+INSERT INTO DIM_TIME VALUES
+(20260101, 3, 2026),
+(20260102, 3, 2026);
+
+-- Insert result records
+INSERT INTO FACT_RESULT VALUES
+(1, 1, 101, 20260101, 85, 90.5),
+(2, 2, 102, 20260102, 92, 95.0);
+
+-- Display result records
+SELECT * FROM FACT_RESULT;
+
+-- Join all tables
+SELECT
+    f.result_id,
+    s.name AS student_name,
+    s.department,
+    c.course_name,
+    t.semester,
+    t.year,
+    f.marks,
+    f.attendance_percent
+FROM FACT_RESULT f
+JOIN DIM_STUDENT s
+    ON f.student_id = s.student_id
+JOIN DIM_COURSE c
+    ON f.course_id = c.course_id
+JOIN DIM_TIME t
+    ON f.date_id = t.date_id;

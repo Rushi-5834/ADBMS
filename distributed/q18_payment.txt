@@ -1,0 +1,55 @@
+CREATE DATABASE payment;
+CREATE DATABASE orders;
+CREATE DATABASE inventory;
+
+USE payment;
+
+CREATE TABLE payments (
+    payment_id INT PRIMARY KEY,
+    amount INT,
+    status VARCHAR(20)
+);
+
+USE orders;
+
+CREATE TABLE customer_orders (
+    order_id INT PRIMARY KEY,
+    product_name VARCHAR(30),
+    quantity INT
+);
+
+USE inventory;
+
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(30),
+    stock INT
+);
+
+INSERT INTO inventory.products VALUES
+(1, 'Laptop', 10);
+
+-- Start transaction
+START TRANSACTION;
+
+-- Record payment
+INSERT INTO payment.payments
+VALUES (101, 50000, 'Success');
+
+-- Create order
+INSERT INTO orders.customer_orders
+VALUES (201, 'Laptop', 1);
+
+-- Reduce stock
+UPDATE inventory.products
+SET stock = stock - 1
+WHERE product_id = 1
+AND stock >= 1;
+
+-- Save changes
+COMMIT;
+
+-- Check results
+SELECT * FROM payment.payments;
+SELECT * FROM orders.customer_orders;
+SELECT * FROM inventory.products;

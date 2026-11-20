@@ -1,0 +1,45 @@
+CREATE DATABASE atm_db;
+
+USE atm_db;
+
+CREATE TABLE accounts (
+    acc_no INT PRIMARY KEY,
+    balance INT
+);
+
+CREATE TABLE transactions (
+    transaction_id INT PRIMARY KEY,
+    acc_no INT,
+    amount INT,
+    status VARCHAR(20)
+);
+
+INSERT INTO accounts VALUES
+(101, 10000);
+
+-- Start transaction
+START TRANSACTION;
+
+-- Check balance
+SELECT balance
+FROM accounts
+WHERE acc_no = 101;
+
+-- Withdraw 2000 if sufficient balance
+UPDATE accounts
+SET balance = balance - 2000
+WHERE acc_no = 101
+AND balance >= 2000;
+
+-- Record transaction
+INSERT INTO transactions
+VALUES (1, 101, 2000, 'Success');
+
+-- Save changes
+COMMIT;
+
+-- Check final balance
+SELECT * FROM accounts;
+
+-- Check transaction history
+SELECT * FROM transactions;

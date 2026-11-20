@@ -1,0 +1,42 @@
+// Step 1: Create database
+use college
+
+// Step 2: Insert student records
+db.students.insertMany([
+    { roll: 1, name: "Amit", department: "CSE" },
+    { roll: 2, name: "Neha", department: "IT" },
+    { roll: 3, name: "Ravi", department: "CSE" },
+    { roll: 4, name: "Pooja", department: "ECE" },
+    { roll: 5, name: "Karan", department: "IT" },
+    { roll: 6, name: "Sneha", department: "CSE" }
+])
+
+// Step 3: Display records
+db.students.find()
+
+// Step 4: MapReduce
+db.students.mapReduce(
+    function () {
+        emit(this.department, 1);
+    },
+
+    function (key, values) {
+        return Array.sum(values);
+    },
+
+    { out: "dept_count" }
+)
+
+// Step 5: Display result
+db.dept_count.find()
+
+
+--
+db.students.aggregate([
+    {
+        $group: {
+            _id: "$department",
+            total: { $sum: 1 }
+        }
+    }
+])

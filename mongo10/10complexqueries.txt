@@ -1,0 +1,108 @@
+
+// Q1. Comparison operator ($gt)
+// Find students scoring above 70
+
+db.students.find({
+  marks: { $gt: 70 }
+})
+
+
+// Q2. Range operators ($gte, $lte)
+// Find students scoring between 60 and 80
+
+db.students.find({
+  marks: { $gte: 60, $lte: 80 }
+})
+
+
+// Q3. $in and $nin
+// CSE or IT students who are not from Delhi
+
+db.students.find({
+  department: { $in: ["CSE", "IT"] },
+  city: { $nin: ["Delhi"] }
+})
+
+
+// Q4. Logical operators ($and, $or)
+// IT students scoring above 85 or living in Mumbai
+
+db.students.find({
+  $and: [
+    { department: "IT" },
+    {
+      $or: [
+        { marks: { $gt: 85 } },
+        { city: "Mumbai" }
+      ]
+    }
+  ]
+})
+
+
+// Q5. Logical operator ($nor)
+// Students who are neither ECE nor scoring below 50
+
+db.students.find({
+  $nor: [
+    { department: "ECE" },
+    { marks: { $lt: 50 } }
+  ]
+})
+
+
+// Q6. Regex
+// Find names starting with A
+
+db.students.find({
+  name: { $regex: "^A" }
+})
+
+
+// Q7. Array operator ($all)
+// Students who know both Java and SQL
+
+db.students.find({
+  skills: { $all: ["java", "sql"] }
+})
+
+
+// Q8. Projection, sorting and limit
+// Display top 3 students with only name and marks
+
+db.students.find(
+  {},
+  { _id: 0, name: 1, marks: 1 }
+).sort({ marks: -1 }).limit(3)
+
+
+// Q9. Aggregation ($group, $avg, $sum, $sort)
+// Department-wise average marks and student count
+
+db.students.aggregate([
+  {
+    $group: {
+      _id: "$department",
+      avg_marks: { $avg: "$marks" },
+      total: { $sum: 1 }
+    }
+  },
+  {
+    $sort: { avg_marks: -1 }
+  }
+])
+
+
+// Q10. Update operators ($inc, $set)
+// Give 10 grace marks to students scoring below 40
+
+db.students.updateMany(
+  { marks: { $lt: 40 } },
+  {
+    $inc: { marks: 10 },
+    $set: { grace: true }
+  }
+)
+
+// Verify updated documents
+db.students.find({ grace: true })

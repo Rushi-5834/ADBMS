@@ -1,0 +1,31 @@
+// Step 1: Create database
+use college
+
+// Step 2: Insert product records
+db.products.insertMany([
+    { product: "Pen", category: "Stationery" },
+    { product: "Notebook", category: "Stationery" },
+    { product: "Mouse", category: "Electronics" },
+    { product: "Laptop", category: "Electronics" },
+    { product: "Headphones", category: "Electronics" },
+    { product: "Bag", category: "Fashion" }
+])
+
+// Step 3: Display records
+db.products.find()
+
+// Step 4: MapReduce
+db.products.mapReduce(
+    function () {
+        emit(this.category, 1);
+    },
+
+    function (key, values) {
+        return Array.sum(values);
+    },
+
+    { out: "product_count" }
+)
+
+// Step 5: Display result
+db.product_count.find()

@@ -1,0 +1,102 @@
+CREATE DATABASE university_star;
+USE university_star;
+
+-- Student dimension
+CREATE TABLE DIM_STUDENT (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    program VARCHAR(30),
+    nationality VARCHAR(30)
+);
+
+-- Course dimension
+CREATE TABLE DIM_COURSE (
+    course_id INT PRIMARY KEY,
+    title VARCHAR(50),
+    credits INT
+);
+
+-- Department dimension
+CREATE TABLE DIM_DEPARTMENT (
+    department_id INT PRIMARY KEY,
+    name VARCHAR(50),
+    dean VARCHAR(50)
+);
+
+-- Date dimension
+CREATE TABLE DIM_DATE (
+    date_id INT PRIMARY KEY,
+    semester INT,
+    year INT
+);
+
+-- Fact table
+CREATE TABLE FACT_ENROLLMENT (
+    enroll_id INT PRIMARY KEY,
+    student_id INT,
+    course_id INT,
+    department_id INT,
+    date_id INT,
+    grade_points DECIMAL(4,2),
+    fees_paid DECIMAL(10,2),
+
+    FOREIGN KEY (student_id)
+        REFERENCES DIM_STUDENT(student_id),
+
+    FOREIGN KEY (course_id)
+        REFERENCES DIM_COURSE(course_id),
+
+    FOREIGN KEY (department_id)
+        REFERENCES DIM_DEPARTMENT(department_id),
+
+    FOREIGN KEY (date_id)
+        REFERENCES DIM_DATE(date_id)
+);
+
+-- Insert students
+INSERT INTO DIM_STUDENT VALUES
+(1, 'Amit', 'B.Tech', 'Indian'),
+(2, 'Neha', 'B.Tech', 'Indian');
+
+-- Insert courses
+INSERT INTO DIM_COURSE VALUES
+(101, 'DBMS', 4),
+(102, 'Machine Learning', 3);
+
+-- Insert departments
+INSERT INTO DIM_DEPARTMENT VALUES
+(1, 'IT', 'Dr. Sharma'),
+(2, 'CSE', 'Dr. Patil');
+
+-- Insert dates
+INSERT INTO DIM_DATE VALUES
+(20260101, 3, 2026),
+(20260102, 3, 2026);
+
+-- Insert enrollment records
+INSERT INTO FACT_ENROLLMENT VALUES
+(1, 1, 101, 1, 20260101, 8.50, 50000),
+(2, 2, 102, 2, 20260102, 9.20, 50000);
+
+-- Display records
+SELECT * FROM FACT_ENROLLMENT;
+
+-- Join all tables
+SELECT
+    f.enroll_id,
+    s.name AS student_name,
+    c.title AS course_name,
+    d.name AS department_name,
+    dt.semester,
+    dt.year,
+    f.grade_points,
+    f.fees_paid
+FROM FACT_ENROLLMENT f
+JOIN DIM_STUDENT s
+    ON f.student_id = s.student_id
+JOIN DIM_COURSE c
+    ON f.course_id = c.course_id
+JOIN DIM_DEPARTMENT d
+    ON f.department_id = d.department_id
+JOIN DIM_DATE dt
+    ON f.date_id = dt.date_id;
